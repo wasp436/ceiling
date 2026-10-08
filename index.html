@@ -1,0 +1,1084 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>天花板盤點</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* Layout: reflected-ceiling-plan board on the left, statistics around the vents on the right (stacked on phones). */
+:root{
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei","Noto Sans CJK TC",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --bg:#e9edf0;
+  --surface:#f6f8f9;
+  --ink:#17252d;
+  --on-ink:#f6f8f9;
+  --muted:#587079;
+  --line:#b9c5cc;
+  --tbar:#bcc7ce;
+  --tile:#f7f9f9;
+  --pin:rgba(23,37,45,.16);
+  --void-a:#34424b;
+  --void-b:#6b7b86;
+  --vent-rgb:36,102,148;--ret-rgb:122,63,160;
+  --mold-rgb:84,106,28;
+  --spr-rgb:214,52,38;
+  --part-rgb:176,98,0;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f161a;--surface:#172026;--ink:#e3ecf0;--on-ink:#0f161a;--muted:#8ea2ac;
+    --line:#2e3d46;--tbar:#0c1215;--tile:#25313a;--pin:rgba(255,255,255,.10);
+    --void-a:#05080a;--void-b:#4a5c68;
+    --vent-rgb:111,170,214;--ret-rgb:195,155,224;--mold-rgb:150,184,64;--spr-rgb:255,104,86;--part-rgb:240,170,70;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f161a;--surface:#172026;--ink:#e3ecf0;--on-ink:#0f161a;--muted:#8ea2ac;
+  --line:#2e3d46;--tbar:#0c1215;--tile:#25313a;--pin:rgba(255,255,255,.10);
+  --void-a:#05080a;--void-b:#4a5c68;
+  --vent-rgb:111,170,214;--ret-rgb:195,155,224;--mold-rgb:150,184,64;--spr-rgb:255,104,86;--part-rgb:240,170,70;
+  color-scheme:dark;
+}
+
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;
+  padding-block:18px 32px;padding-inline:16px;
+}
+*{box-sizing:border-box}
+.page{max-width:1120px;margin:0 auto;display:grid;gap:16px}
+
+/* header */
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+h1{margin:0;font-size:24px;line-height:1.25;font-weight:700;text-wrap:balance}
+.lede{margin:6px 0 0;color:var(--muted);max-width:62ch}
+.chip{font:500 12px/1 var(--mono);padding:6px 8px;border:1px solid var(--line);border-radius:4px;color:var(--muted);white-space:nowrap}
+h2{margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--muted)}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px}
+
+/* setup form */
+.setup{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 12px}
+.fld{display:grid;gap:4px}
+.fld span{font-size:12px;color:var(--muted)}
+.fld input{
+  width:78px;height:40px;padding:0 8px;font:500 15px var(--mono);font-variant-numeric:tabular-nums;
+  color:var(--ink);background:var(--tile);border:1px solid var(--line);border-radius:5px;
+}
+.times{padding-bottom:9px;color:var(--muted);font:500 16px var(--mono)}
+.setup-actions{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto}
+.btn{
+  min-height:40px;padding:0 14px;font:inherit;color:var(--ink);background:var(--surface);
+  border:1px solid var(--line);border-radius:5px;cursor:pointer;
+}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--ink);color:var(--on-ink);border-color:var(--ink)}
+.btn.armed{border-color:rgb(var(--spr-rgb));color:rgb(var(--spr-rgb))}
+.btn:focus-visible,.tool:focus-visible,.fld input:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* main layout */
+.layout{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.layout{grid-template-columns:minmax(0,1fr) 360px;align-items:start}}
+.board{display:grid;gap:10px;min-width:0}
+.stats{display:grid;gap:16px;min-width:0}
+
+/* tools */
+.tools{display:flex;flex-wrap:wrap;gap:6px}
+.tool{
+  display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 12px 0 8px;font:inherit;
+  color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:5px;cursor:pointer;
+}
+.tool:hover{border-color:var(--ink)}
+.tool[aria-pressed="true"]{background:var(--ink);color:var(--on-ink);border-color:var(--ink)}
+.tool .t{width:22px;height:22px;flex:none}
+.tool .ico{width:22px;height:22px;flex:none;display:block}
+.hint{margin:0;color:var(--muted);min-height:3em}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend .t{width:20px;height:20px}
+.chk{display:flex;align-items:center;gap:8px;min-height:32px;cursor:pointer}
+.chk input{width:18px;height:18px;margin:0;accent-color:var(--ink)}
+.sw-cov{width:14px;height:14px;background:rgba(var(--vent-rgb),.28);border:1px solid rgb(var(--vent-rgb))}
+
+/* cell visuals, shared by the grid, tool swatches and legend. Each cell is exactly one of: ceil, void, out, ret. */
+.t{position:relative;display:block;border:1px solid var(--tbar);padding:0;margin:0}
+.t.ceil{background:radial-gradient(circle,var(--pin) .8px,transparent 1.3px) 0 0/7px 7px,var(--tile)}
+.t.void{background:repeating-linear-gradient(135deg,var(--void-a) 0 5px,var(--void-b) 5px 9px);border-color:var(--void-a)}
+.t.out{background:linear-gradient(rgba(var(--vent-rgb),.24),rgba(var(--vent-rgb),.24)),var(--tile)}
+.t.ret{background:linear-gradient(rgba(var(--ret-rgb),.24),rgba(var(--ret-rgb),.24)),var(--tile)}
+.t.ceil.has-mold{
+  background:
+    radial-gradient(ellipse at 30% 36%,rgba(var(--mold-rgb),.92) 0 12%,rgba(var(--mold-rgb),.55) 22%,rgba(var(--mold-rgb),0) 40%),
+    radial-gradient(ellipse at 68% 64%,rgba(var(--mold-rgb),.88) 0 16%,rgba(var(--mold-rgb),.5) 28%,rgba(var(--mold-rgb),0) 48%),
+    radial-gradient(circle at 72% 24%,rgba(var(--mold-rgb),.7) 0 7%,rgba(var(--mold-rgb),0) 20%),
+    radial-gradient(circle,var(--pin) .8px,transparent 1.3px) 0 0/7px 7px,
+    var(--tile);
+}
+.t.out::before,.t.ret::before{
+  content:"出";position:absolute;inset:14%;pointer-events:none;border-radius:2px;
+  display:flex;align-items:center;justify-content:center;
+  font:700 var(--gl,11px)/1 var(--sans);
+  color:rgb(var(--vent-rgb));background:var(--tile);border:2px solid rgb(var(--vent-rgb));
+}
+.t.ret::before{content:"回";color:rgb(var(--ret-rgb));border-color:rgb(var(--ret-rgb))}
+.t.ceil.has-part::before{
+  content:"";position:absolute;inset:3px;pointer-events:none;
+  border:2px dashed rgb(var(--part-rgb));
+  background:linear-gradient(to bottom left,rgb(var(--part-rgb)) 0 24%,transparent 25%);
+}
+.t.ceil.has-spr::after{
+  content:"";position:absolute;left:50%;top:50%;width:34%;aspect-ratio:1;transform:translate(-50%,-50%);
+  pointer-events:none;border-radius:50%;border:2px solid rgb(var(--spr-rgb));
+  background:radial-gradient(circle,rgb(var(--spr-rgb)) 0 30%,transparent 32%);
+}
+
+/* grid */
+.gridwrap{overflow:auto;padding:10px;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+#grid{--hw:28px;--cs:40px;--gl:calc(var(--cs) * .4);display:grid;width:max-content;user-select:none;-webkit-user-select:none}
+.corner{height:22px}
+.hd{
+  display:flex;align-items:center;justify-content:center;padding:0;border:0;border-radius:3px;
+  font:500 11px/1 var(--mono);color:var(--muted);background:transparent;cursor:pointer;
+}
+.hd:hover{color:var(--ink);background:var(--line)}
+.hd.col{height:22px;width:var(--cs)}
+.hd.row{width:var(--hw);height:var(--cs)}
+.c{
+  appearance:none;-webkit-appearance:none;width:var(--cs);height:var(--cs);cursor:pointer;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+@media (hover:hover){.c:hover{outline:2px solid var(--ink);outline-offset:-2px;z-index:1}}
+.c:focus-visible{outline:2px solid var(--ink);outline-offset:-2px;z-index:2}
+.t.sel{outline:3px solid #e0561b;outline-offset:-3px;position:relative;z-index:1}
+.pbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.pbar[hidden]{display:none}
+.pbar .pt{font:600 14px var(--mono);margin-right:auto}
+.t.cov{box-shadow:inset 0 0 0 999px rgba(var(--vent-rgb),.16)}
+
+.caption{
+  display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;padding:6px 10px;
+  font:500 12px var(--mono);color:var(--muted);background:var(--surface);border:1px solid var(--line);
+}
+.tip{margin:0;font-size:12px;color:var(--muted)}
+
+/* stats */
+.kv{margin:0}
+.kvr{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:7px 0;border-bottom:1px solid var(--line)}
+.kvr:last-child{border-bottom:0}
+.kvr dt{display:flex;align-items:center;gap:8px;color:var(--muted)}
+.kvr dt::before{content:"";width:8px;height:8px;border-radius:50%;background:transparent;flex:none}
+.kvr.k-vent dt::before{background:rgb(var(--vent-rgb))}
+.kvr.k-ret dt::before{background:rgb(var(--ret-rgb))}
+.kvr.k-mold dt::before{background:rgb(var(--mold-rgb))}
+.kvr.k-spr dt::before{background:rgb(var(--spr-rgb))}
+.kvr.k-part dt::before{background:rgb(var(--part-rgb))}
+.kvr dd{margin:0;font:600 14px var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+.empty{margin:10px 0 0;color:var(--muted)}
+.export{justify-self:start}
+.modal{
+  position:fixed;inset:0;z-index:10;display:grid;place-items:center;background:rgba(0,0,0,.55);
+  padding:max(16px,env(safe-area-inset-top,0px)) 16px max(16px,env(safe-area-inset-bottom,0px));
+}
+.modal-card{
+  width:100%;max-width:980px;max-height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:10px;
+  padding:14px;background:var(--surface);border:1px solid var(--line);border-radius:6px;
+}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.modal-head h2{margin:0}
+.modal-body{overflow:auto;min-height:0;background:#fff;border:1px solid var(--line)}
+.modal-body img{display:block;max-width:100%;height:auto;margin:0 auto}
+.pv{margin:0;padding:10px;display:grid;gap:8px}
+.pv+.pv{border-top:1px solid var(--line)}
+.pv[hidden]{display:none}
+.pv-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;color:#17252d}
+.pv-head b{font-size:14px}
+.cp{display:grid;gap:8px;width:100%}
+.cp[hidden]{display:none}
+.cp textarea{display:block;width:100%;box-sizing:border-box;resize:none;padding:8px 10px;font:14px/1.7 var(--mono);color:var(--ink);background:var(--tile);border:1px solid var(--line);border-radius:6px}
+.cp .btn{justify-self:start}
+.modal-foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.note{font-size:12px;color:var(--muted)}
+.ph{
+  position:absolute;top:2px;right:2px;z-index:1;min-width:16px;height:16px;padding:0 4px;border-radius:8px;
+  background:var(--ink);color:var(--on-ink);font:600 11px/16px var(--mono);text-align:center;pointer-events:none;
+}
+.photos{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ph-item{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:10px;align-items:center}
+.ph-item img{display:block;width:72px;height:54px;object-fit:cover;border:1px solid var(--line);background:var(--tile)}
+.ph-lab{font:600 14px var(--mono)}
+.ph-btns{display:flex;flex-wrap:wrap;gap:6px;grid-column:1/-1}
+.btn.sm{min-height:36px;padding:0 10px}
+.sr-file{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none}
+</style>
+
+<div class="page">
+  <header class="top">
+    <div>
+      <h1>天花板盤點</h1>
+      <p class="lede">先產生 m × n 格。每一格只能是天花板、出風口、回風口或牆壁其中一種，天花板格再標記發霉與灑水頭。右側會統計以出風口為中心的九宮格內有幾格發霉，回風口不列入。</p>
+    </div>
+    <span class="chip" id="sampleChip" hidden>範例資料</span>
+  </header>
+
+  <form class="setup panel" id="sizeForm">
+    <label class="fld"><span>列數 m</span><input id="rowsIn" type="number" inputmode="numeric" min="1" max="40" value="7"></label>
+    <span class="times" aria-hidden="true">×</span>
+    <label class="fld"><span>欄數 n</span><input id="colsIn" type="number" inputmode="numeric" min="1" max="40" value="10"></label>
+    <button class="btn primary" type="submit">產生格子</button>
+    <div class="setup-actions">
+      <button class="btn" type="button" id="allCeil">全部設為天花板</button>
+      <button class="btn" type="button" id="clearMarks">清除標記</button>
+      <button class="btn" type="button" id="loadSample">載入範例</button>
+    </div>
+  </form>
+
+  <div class="layout">
+    <section class="board" aria-label="天花板格點">
+      <div class="tools" id="tools" role="toolbar" aria-label="標記工具"></div>
+      <p class="hint" id="hint"></p>
+      <div class="pbar" id="pbar" hidden><span class="pt" id="pbarText"></span><button class="btn sm" id="pbarGo" type="button">拍照</button><button class="btn sm" id="pbarCancel" type="button">取消</button></div>
+      <div class="legend"><span><i class="t ceil"></i>天花板</span><span><i class="t void"></i>牆壁</span></div>
+      <label class="chk"><input type="checkbox" id="covChk" checked><span class="sw-cov"></span>顯示出風口九宮格範圍</label>
+      <div class="gridwrap" id="gridwrap"><div id="grid" role="group" aria-label="天花板格點"></div></div>
+      <div class="caption"><span>天花板平面圖</span><span id="capSize"></span></div>
+      <button class="btn export" id="exportBtn" type="button">輸出圖片</button>
+      <input class="sr-file" id="photoIn" type="file" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
+      <p class="tip">滑鼠可按住拖曳連續標記。點列號或欄號，可整列、整欄套用目前工具。鍵盤用方向鍵移動，Enter 或空白鍵套用。</p>
+    </section>
+
+    <aside class="stats" aria-label="統計">
+      <section class="panel">
+        <h2>總覽</h2>
+        <dl class="kv" id="overview"></dl>
+      </section>
+      <section class="panel">
+        <h2>出風口九宮格發霉</h2>
+        <dl class="kv" id="ventAgg"></dl>
+        <p class="empty" id="ventEmpty" hidden>還沒有出風口。選「出風口」工具後點格子。</p>
+      </section>
+      <section class="panel" id="photoPanel" hidden>
+        <h2>照片</h2>
+        <ul class="photos" id="photoList"></ul>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<div class="modal" id="imgModal" role="dialog" aria-modal="true" aria-label="圖片預覽" hidden>
+  <div class="modal-card">
+    <div class="modal-head"><h2>圖片預覽</h2><button class="btn" id="imgClose" type="button">關閉</button></div>
+    <div class="modal-body">
+      <figure class="pv" id="pvA"><div class="pv-head"><b id="capA">含照片</b><button class="btn primary sm" id="imgSave" type="button" hidden>儲存這張</button></div><img id="imgPrev" alt="含照片的天花板平面圖預覽"></figure>
+      <figure class="pv" id="pvB"><div class="pv-head"><b id="capB">不含照片</b><button class="btn primary sm" id="imgSave2" type="button" hidden>儲存這張</button></div><img id="imgPrev2" alt="不含照片的天花板平面圖預覽"></figure>
+    </div>
+    <div class="modal-foot">
+      <div class="cp" id="cpBox" hidden>
+        <textarea id="cpText" rows="4" readonly aria-label="統計文字"></textarea>
+        <button class="btn primary sm" id="cpBtn" type="button">一鍵複製統計</button>
+      </div>
+      <span class="note" id="imgNote"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id)};
+var KEY='ceiling-inventory-v2',OLD_KEY='ceiling-inventory-v1';
+var MAXN=40;
+var TYPES=['ceil','void','out','ret'];
+var TYPE_OF={ceil:'ceil',out:'out',ret:'ret',void:'void'};
+var FLAG={mold:'m',spr:'s',part:'p'};
+var ICO_OPEN='<svg class="ico" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+var TOOLS={
+  ceil:{label:'天花板',sw:'<span class="t ceil"></span>',hint:'點格子設為天花板。每一格只能是天花板、出風口、回風口或牆壁其中一種。'},
+  out:{label:'出風口',sw:'<span class="t out"></span>',hint:'點格子設為出風口（圖案「出」），再點一次改回天花板。出風口不是天花板，不能發霉或有灑水頭。'},
+  ret:{label:'回風口',sw:'<span class="t ret"></span>',hint:'點格子設為回風口（圖案「回」），再點一次改回天花板。回風口不是天花板，不能發霉或有灑水頭。'},
+  void:{label:'牆壁',sw:'<span class="t void"></span>',hint:'點格子設為牆壁，再點一次改回天花板。牆壁不能發霉或有灑水頭。'},
+  mold:{label:'發霉',sw:'<span class="t ceil has-mold"></span>',hint:'點天花板格標記或取消發霉。'},
+  spr:{label:'灑水頭',sw:'<span class="t ceil has-spr"></span>',hint:'點天花板格標記或取消消防灑水頭。已標「要切割」的格子不能再標灑水頭。'},
+  part:{label:'要切割',sw:'<span class="t ceil has-part"></span>',hint:'點天花板格標記或取消要切割（被牆、梁或管線卡住、需要裁切的板子）。有灑水頭的格子不能標要切割。'},
+  photo:{label:'拍照',sw:ICO_OPEN+'<path d="M3.5 7.5h3L8 5h6l1.5 2.5h3V17h-15z"/><circle cx="11" cy="12" r="3"/></svg>',hint:'點格子選取拍照範圍，再點另一格可擴大成多格（矩形範圍），然後按「拍照」。手機會開啟相機，電腦會選擇圖片。同一個起點格再拍會取代舊照片。照片會附在輸出圖片上，並用箭頭指到範圍。'},
+};
+
+var rows=7,cols=10,cells=[],tool='ceil',showCov=true,sample=true;
+var cellEls=[],roving=null,painting=false,paintVal=null,suppressClick=false,raf=0;
+
+var grid=$('grid'),wrap=$('gridwrap');
+var photos=[],pendingKey=null,pendingH=1,pendingW=1,selA=-1,selB=-1;
+
+function newCell(){return {t:'ceil',m:false,s:false,p:false}}
+function colName(c){var s='',n=c+1;while(n>0){var m=(n-1)%26;s=String.fromCharCode(65+m)+s;n=Math.floor((n-1)/26)}return s}
+function label(i){return colName(i%cols)+((i/cols|0)+1)}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function isVent(c){return c.t==='out'||c.t==='ret'}
+
+/* ---------- state ---------- */
+function loadSample(){
+  rows=7;cols=10;
+  cells=[];for(var k=0;k<rows*cols;k++)cells.push(newCell());
+  function set(list,key,val){list.forEach(function(p){cells[p[0]*cols+p[1]][key]=val})}
+  set([[2,5],[6,9]],'t','void');
+  set([[1,2],[3,4],[1,7]],'t','out');
+  set([[5,7],[3,9]],'t','ret');
+  set([[0,2],[1,1],[2,2],[2,3],[3,5],[4,4],[1,8],[0,7],[6,0],[5,9],[4,8],[2,1]],'m',true);
+  set([[1,4],[3,2],[3,6],[5,3],[1,6],[5,5],[2,1]],'s',true);
+  set([[0,0],[6,5],[4,9]],'p',true);
+  sample=true;
+}
+function save(){
+  try{
+    localStorage.setItem(KEY,JSON.stringify({
+      rows:rows,cols:cols,showCov:showCov,sample:sample,
+      cells:cells.map(function(c){return TYPES.indexOf(c.t)|(c.m?4:0)|(c.s?8:0)|(c.p?16:0)})
+    }));
+  }catch(e){}
+}
+function load(){
+  try{
+    var legacy=false,raw=localStorage.getItem(KEY);
+    if(!raw){raw=localStorage.getItem(OLD_KEY);legacy=true}
+    if(!raw)return false;
+    var d=JSON.parse(raw);
+    if(!d||!Number.isInteger(d.rows)||!Number.isInteger(d.cols))return false;
+    if(d.rows<1||d.rows>MAXN||d.cols<1||d.cols>MAXN)return false;
+    if(!Array.isArray(d.cells)||d.cells.length!==d.rows*d.cols)return false;
+    var max=31;
+    for(var i=0;i<d.cells.length;i++){var b=d.cells[i];if(!Number.isInteger(b)||b<0||b>max)return false}
+    rows=d.rows;cols=d.cols;
+    cells=d.cells.map(function(b){
+      if(legacy)return {t:!(b&1)?'void':(b&2)?'out':(b&16)?'ret':'ceil',m:!!(b&4),s:!!(b&8),p:false};
+      return {t:TYPES[b&3],m:!!(b&4),s:!!(b&8),p:!!(b&8)?false:!!(b&16)};
+    });
+    showCov=d.showCov!==false;sample=!!d.sample;
+    return true;
+  }catch(e){return false}
+}
+
+/* ---------- grid building ---------- */
+function mk(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
+function buildGrid(){
+  selA=selB=-1;
+  grid.textContent='';cellEls=[];roving=null;
+  grid.style.gridTemplateColumns='var(--hw) repeat('+cols+', var(--cs))';
+  var frag=document.createDocumentFragment();
+  frag.append(mk('span','corner'));
+  for(var c=0;c<cols;c++){
+    var h=mk('button','hd col',colName(c));h.type='button';h.tabIndex=-1;
+    h.dataset.k='col';h.dataset.n=c;h.setAttribute('aria-label','整欄套用 '+colName(c));
+    frag.append(h);
+  }
+  for(var r=0;r<rows;r++){
+    var rh=mk('button','hd row',String(r+1));rh.type='button';rh.tabIndex=-1;
+    rh.dataset.k='row';rh.dataset.n=r;rh.setAttribute('aria-label','整列套用 '+(r+1));
+    frag.append(rh);
+    for(var cc=0;cc<cols;cc++){
+      var b=mk('button','c t ceil');b.type='button';b.tabIndex=-1;b.dataset.i=r*cols+cc;
+      cellEls.push(b);frag.append(b);
+    }
+  }
+  grid.append(frag);
+  if(cellEls[0]){cellEls[0].tabIndex=0;roving=cellEls[0]}
+  fit();
+  renderPhotos();
+}
+function fit(){
+  var w=wrap.clientWidth;if(!w)return;
+  var avail=w-20-28;
+  grid.style.setProperty('--cs',clamp(Math.floor(avail/cols),26,54)+'px');
+}
+if(window.ResizeObserver)new ResizeObserver(fit).observe(wrap);else window.addEventListener('resize',fit);
+
+function resize(nr,nc){
+  var old=cells,or=rows,oc=cols;
+  cells=[];
+  for(var r=0;r<nr;r++)for(var c=0;c<nc;c++)cells.push(r<or&&c<oc?old[r*oc+c]:newCell());
+  rows=nr;cols=nc;
+  photos=photos.filter(function(p){return inBounds(p.key)});
+  savePhotos();
+  buildGrid();
+}
+
+/* ---------- editing ---------- */
+function canFlag(c,key){
+  if(c.t!=='ceil')return false;
+  if(key==='p'&&c.s)return false;   /* sprinkler cells cannot be marked 要切割, and vice versa */
+  if(key==='s'&&c.p)return false;
+  return true;
+}
+function targetFor(i){
+  var c=cells[i];
+  if(TYPE_OF[tool]){
+    var t=TYPE_OF[tool];
+    return (t==='ceil'||c.t!==t)?t:'ceil';
+  }
+  if(FLAG[tool])return canFlag(c,FLAG[tool])?!c[FLAG[tool]]:null;
+  return null;
+}
+function applyCell(i,val){
+  var c=cells[i];
+  if(TYPE_OF[tool])c.t=val;
+  else if(FLAG[tool]&&canFlag(c,FLAG[tool]))c[FLAG[tool]]=val;
+}
+function dirty(){sample=false;schedule()}
+function paintCell(i){
+  if(paintVal===null){paintVal=targetFor(i);if(paintVal===null)return}
+  applyCell(i,paintVal);dirty();
+}
+function applyLine(kind,n){
+  if(tool==='photo')return;
+  var idx=[],k;
+  if(kind==='row'){for(k=0;k<cols;k++)idx.push(n*cols+k)}else{for(k=0;k<rows;k++)idx.push(k*cols+n)}
+  var val;
+  if(TYPE_OF[tool]){
+    var t=TYPE_OF[tool];
+    val=(t==='ceil'||!idx.every(function(i){return cells[i].t===t}))?t:'ceil';
+  }
+  else{
+    var key=FLAG[tool],ce=idx.filter(function(i){return canFlag(cells[i],key)});
+    if(!ce.length)return;
+    val=!ce.every(function(i){return cells[i][key]});
+  }
+  idx.forEach(function(i){applyCell(i,val)});
+  dirty();
+}
+
+grid.addEventListener('pointerdown',function(e){
+  if(e.pointerType!=='mouse'||e.button!==0)return;
+  var cell=e.target.closest('.c');if(!cell||tool==='photo')return;
+  painting=true;paintVal=null;suppressClick=true;
+  paintCell(+cell.dataset.i);
+});
+grid.addEventListener('pointerover',function(e){
+  if(!painting)return;
+  var cell=e.target.closest('.c');if(cell)paintCell(+cell.dataset.i);
+});
+function endPaint(){if(painting){painting=false;setTimeout(function(){suppressClick=false},60)}}
+window.addEventListener('pointerup',endPaint);
+window.addEventListener('pointercancel',endPaint);
+grid.addEventListener('click',function(e){
+  var hd=e.target.closest('.hd');
+  if(hd){applyLine(hd.dataset.k,+hd.dataset.n);return}
+  var cell=e.target.closest('.c');if(!cell||suppressClick)return;
+  var i=+cell.dataset.i;
+  if(tool==='photo'){startPhoto(i);return}
+  paintVal=null;paintCell(i);
+});
+grid.addEventListener('keydown',function(e){
+  var cell=e.target.closest('.c');if(!cell)return;
+  var i=+cell.dataset.i,r=(i/cols)|0,c=i%cols;
+  if(e.key==='ArrowUp')r--;else if(e.key==='ArrowDown')r++;
+  else if(e.key==='ArrowLeft')c--;else if(e.key==='ArrowRight')c++;else return;
+  e.preventDefault();
+  r=clamp(r,0,rows-1);c=clamp(c,0,cols-1);
+  cellEls[r*cols+c].focus();
+});
+grid.addEventListener('focusin',function(e){
+  var cell=e.target.closest('.c');
+  if(cell&&cell!==roving){if(roving)roving.tabIndex=-1;cell.tabIndex=0;roving=cell}
+});
+
+/* ---------- tools ---------- */
+var toolsEl=$('tools');
+Object.keys(TOOLS).forEach(function(k){
+  var b=mk('button','tool');b.type='button';b.dataset.tool=k;
+  b.innerHTML=TOOLS[k].sw+'<span>'+TOOLS[k].label+'</span>';
+  toolsEl.append(b);
+});
+toolsEl.addEventListener('click',function(e){
+  var b=e.target.closest('.tool');if(!b)return;
+  tool=b.dataset.tool;syncTools();
+});
+function syncTools(){
+  toolsEl.querySelectorAll('.tool').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.tool===tool))});
+  $('hint').textContent=TOOLS[tool].hint;
+  if(tool!=='photo'&&selA>=0)clearSel();else updateBar();
+}
+
+/* ---------- form and buttons ---------- */
+function syncInputs(){
+  $('rowsIn').value=rows;$('colsIn').value=cols;
+  $('covChk').checked=showCov;
+}
+function applySize(){
+  var nr=clamp(parseInt($('rowsIn').value,10)||rows,1,MAXN);
+  var nc=clamp(parseInt($('colsIn').value,10)||cols,1,MAXN);
+  var changed=nr!==rows||nc!==cols;
+  if(changed)resize(nr,nc);
+  syncInputs();
+  if(changed)dirty();
+}
+$('sizeForm').addEventListener('submit',function(e){e.preventDefault();applySize()});
+['rowsIn','colsIn'].forEach(function(id){$(id).addEventListener('change',applySize)});
+$('allCeil').addEventListener('click',function(){cells.forEach(function(c){c.t='ceil'});dirty()});
+function armed(btn,fn){
+  var t=null,text=btn.textContent;
+  btn.addEventListener('click',function(){
+    if(btn.classList.contains('armed')){clearTimeout(t);btn.classList.remove('armed');btn.textContent=text;fn()}
+    else{
+      btn.classList.add('armed');btn.textContent='再按一次確認';
+      t=setTimeout(function(){btn.classList.remove('armed');btn.textContent=text},3000);
+    }
+  });
+}
+armed($('clearMarks'),function(){
+  cells.forEach(function(c){c.m=false;c.s=false;c.p=false;if(isVent(c))c.t='ceil'});
+  dirty();
+});
+armed($('loadSample'),function(){loadSample();photos=[];savePhotos();buildGrid();syncInputs();schedule()});
+$('covChk').addEventListener('change',function(){showCov=this.checked;schedule()});
+
+/* ---------- statistics ---------- */
+function nbrs(i){
+  var r=(i/cols)|0,c=i%cols,out=[];
+  for(var dr=-1;dr<=1;dr++)for(var dc=-1;dc<=1;dc++){
+    var rr=r+dr,cc=c+dc;
+    if(rr<0||rr>=rows||cc<0||cc>=cols)continue;
+    out.push(rr*cols+cc);
+  }
+  return out;
+}
+function kvRow(name,value,kind){
+  return '<div class="kvr'+(kind?' k-'+kind:'')+'"><dt>'+name+'</dt><dd>'+value+'</dd></div>';
+}
+var DESC={ceil:'天花板',void:'牆壁',out:'出風口',ret:'回風口'};
+
+function stats(){
+  var n=rows*cols,i,st={ceilN:0,voidN:0,outN:0,retN:0,moldN:0,sprN:0,partN:0,uMold:0,uSpr:0,uPart:0,uBoth:0,uPlain:0,outs:[],union:null};
+  for(i=0;i<n;i++){
+    var x=cells[i];
+    if(x.t==='ceil'){st.ceilN++;if(x.m)st.moldN++;if(x.s)st.sprN++;if(x.p)st.partN++}
+    else if(x.t==='void')st.voidN++;
+    else if(x.t==='out'){st.outN++;st.outs.push(i)}
+    else st.retN++;
+  }
+  /* 3x3 around every 出風口 (return vents are not centers); overlapping cells are counted once */
+  var union=new Set();
+  st.outs.forEach(function(v){nbrs(v).forEach(function(j){union.add(j)})});
+  union.forEach(function(j){var y=cells[j];if(y.t==='ceil'&&y.m){st.uMold++;if(y.s)st.uSpr++;else if(y.p)st.uPart++;else st.uPlain++}});
+  st.union=union;
+  return st;
+}
+
+function render(){
+  var n=rows*cols,i;
+  if(cellEls.length!==n)return;
+  var st=stats();
+
+  /* grid cells */
+  var sr=selRect();
+  for(i=0;i<n;i++){
+    var c=cells[i],el=cellEls[i],cls='c t '+c.t,desc=DESC[c.t];
+    if(c.t==='ceil'){
+      if(c.m){cls+=' has-mold';desc+='、發霉'}
+      if(c.s){cls+=' has-spr';desc+='、灑水頭'}
+      if(c.p){cls+=' has-part';desc+='、要切割'}
+    }
+    if(showCov&&st.union.has(i))cls+=' cov';
+    if(sr){var rr=(i/cols)|0,cc=i%cols;if(rr>=sr.r&&rr<sr.r+sr.h&&cc>=sr.c&&cc<sr.c+sr.w)cls+=' sel'}
+    if(el.className!==cls)el.className=cls;
+    var al=label(i)+' '+desc;
+    if(el._l!==al){el._l=al;el.setAttribute('aria-label',al)}
+  }
+
+  $('overview').innerHTML=
+    kvRow('格數',rows+' × '+cols+' = '+n)+
+    kvRow('天花板',st.ceilN)+
+    kvRow('牆壁',st.voidN)+
+    kvRow('出風口',st.outN,'vent')+
+    kvRow('回風口',st.retN,'ret')+
+    kvRow('發霉',st.moldN+'（'+(st.ceilN?Math.round(st.moldN/st.ceilN*100)+'%':'—')+'）','mold')+
+    kvRow('灑水頭',st.sprN,'spr')+
+    kvRow('要切割',st.partN,'part');
+
+  var agg='',empty=$('ventEmpty');
+  if(st.outs.length){
+    agg=kvRow('有灑水頭',st.uSpr,'spr')+
+      kvRow('要切割',st.uPart,'part')+
+      kvRow('完整',st.uPlain,'mold')+
+      kvRow('總數',st.uMold,'mold');
+    empty.hidden=true;
+  }else empty.hidden=false;
+  $('ventAgg').innerHTML=agg;
+  $('ventAgg').hidden=!agg;
+
+  $('capSize').textContent=rows+' 列 × '+cols+' 欄 = '+n+' 格';
+  $('sampleChip').hidden=!sample;
+}
+
+/* ---------- photos ---------- */
+var dbP=null;
+function idb(){
+  return dbP||(dbP=new Promise(function(res){
+    try{
+      var rq=indexedDB.open('ceiling-inventory',1);
+      rq.onupgradeneeded=function(){rq.result.createObjectStore('kv')};
+      rq.onsuccess=function(){res(rq.result)};
+      rq.onerror=function(){res(null)};
+    }catch(e){res(null)}
+  }));
+}
+function savePhotos(){
+  idb().then(function(db){
+    if(!db)return;
+    try{
+      var st=db.transaction('kv','readwrite').objectStore('kv');
+      st.put(photos,'photos');
+      var keep={};photos.forEach(function(p){keep['orig:'+p.key]=1});
+      var cr=st.openCursor();
+      cr.onsuccess=function(){
+        var c=cr.result;if(!c)return;
+        if(typeof c.key==='string'&&c.key.indexOf('orig:')===0&&!keep[c.key])c.delete();
+        c.continue();
+      };
+    }catch(e){}
+  });
+}
+function saveOrig(key,file){
+  return idb().then(function(db){
+    if(!db||!file)return;
+    try{db.transaction('kv','readwrite').objectStore('kv').put(file,'orig:'+key)}catch(e){}
+  });
+}
+function getOrig(key){
+  return idb().then(function(db){
+    return new Promise(function(res){
+      if(!db)return res(null);
+      try{
+        var rq=db.transaction('kv').objectStore('kv').get('orig:'+key);
+        rq.onsuccess=function(){res(rq.result instanceof Blob?rq.result:null)};
+        rq.onerror=function(){res(null)};
+      }catch(e){res(null)}
+    });
+  });
+}
+function loadPhotos(){
+  idb().then(function(db){
+    if(!db)return;
+    try{
+      var rq=db.transaction('kv').objectStore('kv').get('photos');
+      rq.onsuccess=function(){
+        var d=rq.result;
+        if(!Array.isArray(d)||photos.length)return;
+        photos=d.filter(function(p){
+          return p&&typeof p.key==='string'&&typeof p.data==='string'&&p.data.indexOf('data:image/')===0&&inBounds(p.key);
+        }).map(function(p){
+          p.h=Number.isInteger(p.h)&&p.h>0?p.h:1;p.w=Number.isInteger(p.w)&&p.w>0?p.w:1;return p;
+        });
+        renderPhotos();
+      };
+    }catch(e){}
+  });
+}
+function keyOf(i){return ((i/cols)|0)+','+(i%cols)}
+function inBounds(key){var q=key.split(',');return +q[0]<rows&&+q[1]<cols}
+function photoAt(key){for(var k=0;k<photos.length;k++)if(photos[k].key===key)return k;return -1}
+function rectOf(p){
+  var q=p.key.split(','),r=+q[0],c=+q[1];
+  return {r:r,c:c,h:Math.max(1,Math.min(p.h||1,rows-r)),w:Math.max(1,Math.min(p.w||1,cols-c))};
+}
+function rectLabel(rc){
+  var a=colName(rc.c)+(rc.r+1);
+  return (rc.h===1&&rc.w===1)?a:a+'-'+colName(rc.c+rc.w-1)+(rc.r+rc.h);
+}
+function selRect(){
+  if(selA<0)return null;
+  var r1=Math.min((selA/cols)|0,(selB/cols)|0),r2=Math.max((selA/cols)|0,(selB/cols)|0);
+  var c1=Math.min(selA%cols,selB%cols),c2=Math.max(selA%cols,selB%cols);
+  return {r:r1,c:c1,h:r2-r1+1,w:c2-c1+1};
+}
+function updateBar(){
+  var rc=selRect(),bar=$('pbar');
+  bar.hidden=!(rc&&tool==='photo');
+  if(rc)$('pbarText').textContent='拍照範圍 '+rectLabel(rc)+'（'+(rc.h*rc.w)+' 格）';
+}
+function clearSel(){selA=selB=-1;updateBar();schedule()}
+function setPhoto(key,data,file,h,w){
+  var k=photoAt(key);
+  if(k>=0){photos[k].data=data;photos[k].h=h;photos[k].w=w}else photos.push({key:key,data:data,h:h,w:w});
+  saveOrig(key,file);
+  savePhotos();renderPhotos();
+}
+function dataBlob(u){
+  var m=/^data:([^;,]+);base64,(.*)$/.exec(u),b=atob(m[2]),a=new Uint8Array(b.length);
+  for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);
+  return new Blob([a],{type:m[1]});
+}
+var EXT={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/gif':'gif'};
+function downloadOrig(p,k,btn){
+  var label=btn.textContent;
+  function say(t){btn.textContent=t;setTimeout(function(){btn.textContent=label},2200)}
+  getOrig(p.key).then(function(blob){
+    var note='';
+    if(!blob||!EXT[blob.type]){
+      /* original unavailable (older photo) or a format that cannot be saved directly */
+      blob=dataBlob(p.data);note='compressed';
+    }
+    var name='照片'+(k+1)+'_'+rectLabel(rectOf(p))+'.'+EXT[blob.type];
+    if(!dl){
+      $('imgPrev').src=URL.createObjectURL(blob);
+      cvA=cvB=null;$('pvA').hidden=false;$('pvB').hidden=true;$('capA').textContent='原圖';$('cpBox').hidden=true;
+      openModal();
+      $('imgNote').textContent='長按（或按右鍵）圖片即可儲存'+(note?'（此張只有壓縮版）':'原圖')+'。';
+      return;
+    }
+    dl.save({filename:name,data:blob}).then(function(){
+      say(note?'已存壓縮版':'已儲存');
+    },function(err){
+      say(err&&err.code==='declined'?'已取消':'無法儲存');
+    });
+  });
+}
+function delPhoto(key){
+  var k=photoAt(key);if(k<0)return;
+  photos.splice(k,1);savePhotos();renderPhotos();
+}
+function renderPhotos(){
+  cellEls.forEach(function(el){if(el._ph){el._ph.remove();el._ph=null}});
+  var list=$('photoList');
+  list.textContent='';
+  photos.forEach(function(p,k){
+    var li=mk('li','ph-item'),img=mk('img');
+    img.src=p.data;img.alt='照片 '+(k+1);
+    var lab=mk('span','ph-lab',(k+1)+' · '+rectLabel(rectOf(p)));
+    var box=mk('span','ph-btns');
+    var re=mk('button','btn sm','重拍');re.type='button';
+    re.addEventListener('click',function(){pendingKey=p.key;pendingH=p.h||1;pendingW=p.w||1;$('photoIn').value='';$('photoIn').click()});
+    var org=mk('button','btn sm','下載原圖');org.type='button';
+    org.addEventListener('click',function(){downloadOrig(p,k,org)});
+    var del=mk('button','btn sm','刪除');del.type='button';
+    armed(del,function(){delPhoto(p.key)});
+    box.append(re,org,del);li.append(img,lab,box);list.append(li);
+  });
+  $('photoPanel').hidden=!photos.length;
+}
+function startPhoto(i){
+  if(selA<0)selA=selB=i;else selB=i;
+  updateBar();schedule();
+}
+$('pbarCancel').addEventListener('click',clearSel);
+$('pbarGo').addEventListener('click',function(){
+  var rc=selRect();if(!rc)return;
+  pendingKey=rc.r+','+rc.c;pendingH=rc.h;pendingW=rc.w;
+  $('photoIn').value='';$('photoIn').click();
+});
+function shrink(file){
+  return new Promise(function(res,rej){
+    var fr=new FileReader();
+    fr.onerror=function(){rej()};
+    fr.onload=function(){
+      var im=new Image();
+      im.onerror=function(){rej()};
+      im.onload=function(){res(fr.result)};
+      im.src=fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+$('photoIn').addEventListener('change',function(){
+  var f=this.files&&this.files[0],key=pendingKey;
+  if(!f||!key)return;
+  shrink(f).then(function(data){setPhoto(key,data,f,pendingH,pendingW);if(tool==='photo')clearSel()},function(){
+    $('hint').textContent='無法讀取這張照片，請再試一次。';
+    setTimeout(syncTools,3000);
+  });
+});
+
+/* ---------- image export (fixed light palette so the picture reads the same everywhere) ---------- */
+var CV={ink:'#17252d',muted:'#587079',tile:'#f7f9f9',tbar:'#bcc7ce',voidA:'#34424b',voidB:'#6b7b86',
+  vent:'36,102,148',ret:'122,63,160',mold:'84,106,28',spr:'214,52,38',part:'176,98,0'};
+var FONT='"Noto Sans TC","PingFang TC","Microsoft JhengHei","Noto Sans CJK TC",sans-serif';
+var MONO='"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace';
+var GLYPHS='要切割拍照片天花板平面圖盤點牆壁出回風口九宮格範圍發霉灑水頭內外且有列欄數';
+
+function drawCell(ctx,x,y,s,c,cov){
+  var t=c.t,k,px,py;
+  ctx.save();
+  ctx.beginPath();ctx.rect(x,y,s,s);ctx.clip();
+  if(t==='void'){
+    ctx.fillStyle=CV.voidA;ctx.fillRect(x,y,s,s);
+    ctx.strokeStyle=CV.voidB;ctx.lineWidth=s*.11;
+    for(k=-s;k<2*s;k+=s*.3){ctx.beginPath();ctx.moveTo(x+k,y+s);ctx.lineTo(x+k+s,y);ctx.stroke()}
+  }else{
+    ctx.fillStyle=CV.tile;ctx.fillRect(x,y,s,s);
+    if(t==='ceil'){
+      ctx.fillStyle='rgba(23,37,45,.16)';
+      for(py=s*.07;py<s;py+=s*.15)for(px=s*.07;px<s;px+=s*.15)ctx.fillRect(x+px,y+py,1.4,1.4);
+      if(c.m){
+        var blob=function(cx,cy,r,a){
+          var g=ctx.createRadialGradient(cx,cy,0,cx,cy,r);
+          g.addColorStop(0,'rgba('+CV.mold+','+a+')');
+          g.addColorStop(.55,'rgba('+CV.mold+','+(a*.55)+')');
+          g.addColorStop(1,'rgba('+CV.mold+',0)');
+          ctx.fillStyle=g;ctx.fillRect(x,y,s,s);
+        };
+        blob(x+s*.30,y+s*.36,s*.34,.92);
+        blob(x+s*.68,y+s*.64,s*.42,.9);
+        blob(x+s*.72,y+s*.24,s*.2,.7);
+      }
+    }else{
+      ctx.fillStyle='rgba('+(t==='out'?CV.vent:CV.ret)+',.24)';ctx.fillRect(x,y,s,s);
+    }
+  }
+  if(cov){ctx.fillStyle='rgba('+CV.vent+',.16)';ctx.fillRect(x,y,s,s)}
+  if(t==='out'||t==='ret'){
+    var col='rgb('+(t==='out'?CV.vent:CV.ret)+')',lw=Math.max(2,s*.055);
+    ctx.fillStyle=CV.tile;ctx.fillRect(x+s*.14,y+s*.14,s*.72,s*.72);
+    ctx.strokeStyle=col;ctx.lineWidth=lw;
+    ctx.strokeRect(x+s*.14+lw/2,y+s*.14+lw/2,s*.72-lw,s*.72-lw);
+    ctx.fillStyle=col;ctx.font='700 '+Math.round(s*.4)+'px '+FONT;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(t==='out'?'出':'回',x+s/2,y+s/2+s*.02);
+  }
+  if(t==='ceil'&&c.p){
+    var pc='rgb('+CV.part+')',pi=s*.08;
+    ctx.fillStyle=pc;ctx.beginPath();
+    ctx.moveTo(x+s-pi-s*.26,y+pi);ctx.lineTo(x+s-pi,y+pi);ctx.lineTo(x+s-pi,y+pi+s*.26);ctx.closePath();ctx.fill();
+    ctx.strokeStyle=pc;ctx.lineWidth=Math.max(2,s*.05);ctx.setLineDash([s*.14,s*.09]);
+    ctx.strokeRect(x+pi,y+pi,s-pi*2,s-pi*2);ctx.setLineDash([]);
+  }
+  if(t==='ceil'&&c.s){
+    var R=s*.2;
+    ctx.strokeStyle='rgb('+CV.spr+')';ctx.lineWidth=Math.max(2,s*.05);
+    ctx.beginPath();ctx.arc(x+s/2,y+s/2,R,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle='rgb('+CV.spr+')';
+    ctx.beginPath();ctx.arc(x+s/2,y+s/2,R*.45,0,Math.PI*2);ctx.fill();
+  }
+  ctx.restore();
+  ctx.strokeStyle=t==='void'?CV.voidA:CV.tbar;ctx.lineWidth=1.5;
+  ctx.strokeRect(x+.75,y+.75,s-1.5,s-1.5);
+}
+function flow(items,widthOf,maxW,gap){
+  var lines=[[]],x=0;
+  items.forEach(function(it){
+    var w=widthOf(it);
+    if(x>0&&x+w>maxW){lines.push([]);x=0}
+    lines[lines.length-1].push({it:it,x:x,w:w});
+    x+=w+gap;
+  });
+  return lines;
+}
+var PH_COLORS=['#e0561b','#0d8a72','#7b3fc4','#c4237a','#1c6fd1','#a07400','#d1344b','#2f7d32'];
+function loadImg(src){
+  return new Promise(function(res){
+    var im=new Image();
+    im.onload=function(){res(im)};
+    im.onerror=function(){res(null)};
+    im.src=src;
+  });
+}
+function badge(ctx,x,y,num,col){
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x,y,11,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y,9,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='700 12px '+MONO;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(String(num),x,y+.5);
+}
+async function buildCanvas(withPhotos){
+  var ph=withPhotos?photos:[];
+  var st=stats(),n=rows*cols,i,r,c;
+  try{
+    await Promise.race([
+      Promise.all([
+        document.fonts.load('700 20px "Noto Sans TC"',GLYPHS),
+        document.fonts.load('400 14px "Noto Sans TC"',GLYPHS),
+        document.fonts.load('600 13px "IBM Plex Mono"','ABCDEFGHIJ0123456789')
+      ]),
+      new Promise(function(res){setTimeout(res,2500)})
+    ]);
+  }catch(e){}
+  var imgs=await Promise.all(ph.map(function(p){return loadImg(p.data)}));
+  var cs=44,pad=24,hw=34,hh=30,titleH=0;
+  var PW=210,PH=158,CAP=22,PGAP=12,ARW=64;
+  var gridW=hw+cols*cs,gridH=hh+rows*cs;
+
+  /* photos sit left or right of the grid, depending on which half their cell is in */
+  var items=[];
+  ph.forEach(function(p,k){
+    var rc=rectOf(p);
+    if(!(rc.r<rows&&rc.c<cols))return;
+    items.push({n:k+1,r:rc.r,c:rc.c,h:rc.h,w:rc.w,img:imgs[k],side:(rc.c+rc.w/2<cols/2)?'L':'R',col:PH_COLORS[k%PH_COLORS.length],x:0,y:0});
+  });
+  var hasL=items.some(function(o){return o.side==='L'}),hasR=items.some(function(o){return o.side==='R'});
+  var leftW=hasL?PW+ARW:0,rightW=hasR?PW+ARW:0,contentW=leftW+gridW+rightW;
+  var W=Math.max(contentW+pad*2,640),off=Math.round((W-contentW)/2);
+  var gx=off+leftW,gy=pad+titleH+10,maxW=W-pad*2;
+  var colBottom=gy+gridH;
+  ['L','R'].forEach(function(sd){
+    var y=gy;
+    items.filter(function(o){return o.side===sd}).sort(function(a,b){return a.r-b.r||a.c-b.c}).forEach(function(o){
+      var cy=gy+hh+(o.r+o.h/2)*cs;
+      o.y=Math.max(y,Math.round(cy-PH/2));
+      o.x=sd==='L'?off:gx+gridW+ARW;
+      y=o.y+PH+CAP+PGAP;
+      colBottom=Math.max(colBottom,o.y+PH+CAP);
+    });
+  });
+
+  var m=document.createElement('canvas').getContext('2d');
+  m.font='400 14px '+FONT;
+  var legend=[
+    {c:{t:'ceil'},l:'天花板'},{c:{t:'void'},l:'牆壁'},{c:{t:'out'},l:'出風口'},{c:{t:'ret'},l:'回風口'},
+    {c:{t:'ceil',m:true},l:'發霉'},{c:{t:'ceil',s:true},l:'灑水頭'},{c:{t:'ceil',p:true},l:'要切割'}
+  ];
+  if(showCov&&st.outs.length)legend.push({c:{t:'ceil'},cov:true,l:'出風口九宮格範圍'});
+  var legLines=flow(legend,function(it){return 28+m.measureText(it.l).width},maxW,22);
+  var facts=[];
+  if(st.outs.length)facts.push('出風口九宮格發霉：有灑水頭 '+st.uSpr,'要切割 '+st.uPart,'完整 '+st.uPlain,'總數 '+st.uMold);
+  var factLines=flow(facts,function(t){return m.measureText(t).width},maxW,22);
+  var legY=colBottom+18,factY=legY+legLines.length*30+8;
+  var H=facts.length?factY+factLines.length*24+pad-4:legY+legLines.length*30+pad-8;
+  var S=W*H>5e6?1:2;
+  var cv=document.createElement('canvas');cv.width=W*S;cv.height=H*S;
+  var ctx=cv.getContext('2d');ctx.scale(S,S);
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+
+  ctx.textBaseline='middle';
+
+  ctx.fillStyle=CV.muted;ctx.font='600 13px '+MONO;ctx.textAlign='center';
+  for(c=0;c<cols;c++)ctx.fillText(colName(c),gx+hw+c*cs+cs/2,gy+hh/2);
+  for(r=0;r<rows;r++)ctx.fillText(String(r+1),gx+hw/2,gy+hh+r*cs+cs/2);
+  for(i=0;i<n;i++){
+    r=(i/cols)|0;c=i%cols;
+    drawCell(ctx,gx+hw+c*cs,gy+hh+r*cs,cs,cells[i],showCov&&st.union.has(i));
+  }
+
+  /* highlight the photographed cells and draw an arrow from each photo to its cell */
+  items.forEach(function(o){
+    var x0=gx+hw+o.c*cs,y0=gy+hh+o.r*cs;
+    ctx.strokeStyle=o.col;ctx.lineWidth=3.5;
+    ctx.strokeRect(x0+1.75,y0+1.75,o.w*cs-3.5,o.h*cs-3.5);
+    var sx=o.side==='L'?o.x+PW:o.x,sy=o.y+PH/2,tx=x0+o.w*cs/2,ty=y0+o.h*cs/2;
+    var dx=tx-sx,dy=ty-sy,len=Math.sqrt(dx*dx+dy*dy)||1;
+    dx/=len;dy/=len;
+    var edge=Math.min(Math.abs(dx)>1e-6?(o.w*cs/2)/Math.abs(dx):Infinity,Math.abs(dy)>1e-6?(o.h*cs/2)/Math.abs(dy):Infinity),ex=tx-dx*edge,ey=ty-dy*edge;
+    var bx=ex-dx*12,by=ey-dy*12;
+    ctx.lineCap='round';
+    ctx.strokeStyle='#fff';ctx.lineWidth=6;
+    ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(bx,by);ctx.stroke();
+    ctx.strokeStyle=o.col;ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(bx,by);ctx.stroke();
+    ctx.fillStyle=o.col;
+    ctx.beginPath();ctx.moveTo(ex,ey);
+    ctx.lineTo(bx-dy*6,by+dx*6);ctx.lineTo(bx+dy*6,by-dx*6);
+    ctx.closePath();ctx.fill();
+    ctx.lineCap='butt';
+  });
+  items.forEach(function(o){
+    var x0=gx+hw+o.c*cs,y0=gy+hh+o.r*cs;
+    ctx.fillStyle='#eef2f4';ctx.fillRect(o.x,o.y,PW,PH);
+    if(o.img){
+      var k=Math.min(PW/o.img.width,PH/o.img.height),w=o.img.width*k,h=o.img.height*k;
+      ctx.drawImage(o.img,o.x+(PW-w)/2,o.y+(PH-h)/2,w,h);
+    }
+    ctx.strokeStyle=o.col;ctx.lineWidth=3;ctx.strokeRect(o.x+1.5,o.y+1.5,PW-3,PH-3);
+    ctx.fillStyle=CV.ink;ctx.font='600 13px '+MONO;ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText(o.n+' · '+rectLabel(o),o.x,o.y+PH+CAP/2+2);
+  });
+
+  ctx.font='400 14px '+FONT;ctx.textAlign='left';ctx.textBaseline='middle';
+  legLines.forEach(function(line,li){
+    line.forEach(function(e){
+      var y=legY+li*30;
+      drawCell(ctx,pad+e.x,y,20,e.it.c,!!e.it.cov);
+      ctx.fillStyle=CV.ink;ctx.font='400 14px '+FONT;ctx.textAlign='left';ctx.textBaseline='middle';
+      ctx.fillText(e.it.l,pad+e.x+28,y+10);
+    });
+  });
+  ctx.fillStyle=CV.muted;ctx.font='400 14px '+FONT;ctx.textAlign='left';ctx.textBaseline='middle';
+  factLines.forEach(function(line,li){
+    line.forEach(function(e){ctx.fillText(e.it,pad+e.x,factY+li*24+10)});
+  });
+  return cv;
+}
+
+var dl=null,cvA=null,cvB=null,lastFocus=null;
+try{
+  if(window.claude&&window.claude.use){
+    window.claude.use('downloads').then(function(d){dl=d||null;syncSave()},function(){});
+  }
+}catch(e){}
+function syncSave(){
+  $('imgSave').hidden=!dl||!cvA;
+  $('imgSave2').hidden=!dl||!cvB;
+  $('imgNote').textContent=dl?'':'長按（或按右鍵）圖片即可儲存。';
+}
+function openModal(){
+  lastFocus=document.activeElement;
+  syncSave();
+  $('imgModal').hidden=false;
+  $('imgClose').focus();
+}
+function closeModal(){
+  $('imgModal').hidden=true;
+  $('imgPrev').removeAttribute('src');
+  $('imgPrev2').removeAttribute('src');
+  cvA=cvB=null;
+  if(lastFocus&&lastFocus.focus)lastFocus.focus();
+}
+$('exportBtn').addEventListener('click',async function(){
+  var btn=this,text=btn.textContent;
+  btn.disabled=true;btn.textContent='產生中…';
+  try{
+    var hasPh=photos.some(function(p){return inBounds(p.key)});
+    cvB=await buildCanvas(false);
+    cvA=hasPh?await buildCanvas(true):null;
+    $('pvA').hidden=!cvA;
+    $('capA').textContent='含照片';
+    $('capB').textContent=cvA?'不含照片':'平面圖';
+    $('pvB').hidden=false;
+    var tx=statsText();
+    $('cpText').value=tx;$('cpBox').hidden=!tx;
+    if(cvA)$('imgPrev').src=cvA.toDataURL('image/png');
+    $('imgPrev2').src=cvB.toDataURL('image/png');
+    openModal();
+  }catch(e){
+    btn.textContent='無法產生圖片';
+    setTimeout(function(){btn.textContent=text},2000);
+    btn.disabled=false;
+    return;
+  }
+  btn.disabled=false;btn.textContent=text;
+});
+$('imgClose').addEventListener('click',closeModal);
+$('imgModal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('imgModal').hidden)closeModal()});
+function statsText(){
+  var st=stats();
+  if(!st.outs.length)return '';
+  return ['有灑水頭的天花板 '+st.uSpr,'要切割的天花板 '+st.uPart,'完整無須切割 '+st.uPlain,'天花板總數 '+st.uMold].join('\n');
+}
+$('cpBtn').addEventListener('click',async function(){
+  var ta=$('cpText'),note=$('imgNote'),ok=false;
+  try{await navigator.clipboard.writeText(ta.value);ok=true}catch(e){}
+  if(!ok){
+    try{ta.focus();ta.select();ok=document.execCommand('copy')}catch(e){}
+  }
+  if(!ok){ta.focus();ta.select()}
+  note.textContent=ok?'已複製統計。':'無法自動複製，文字已選取，請手動複製。';
+});
+function saveCanvas(cv,suffix){
+  var note=$('imgNote');
+  if(!dl||!cv)return;
+  cv.toBlob(function(blob){
+    if(!blob){note.textContent='圖片產生失敗，請再試一次。';return}
+    dl.save({filename:'天花板盤點_'+rows+'x'+cols+suffix+'.png',data:blob}).then(function(){
+      note.textContent='已儲存。';
+    },function(err){
+      note.textContent=(err&&err.code==='declined')?'已取消儲存。':'無法儲存，請長按（或按右鍵）圖片儲存。';
+    });
+  },'image/png');
+}
+$('imgSave').addEventListener('click',function(){saveCanvas(cvA,'_含照片')});
+$('imgSave2').addEventListener('click',function(){saveCanvas(cvB,cvA?'_無照片':'')});
+
+function schedule(){
+  if(raf)return;
+  raf=requestAnimationFrame(function(){raf=0;render();save()});
+}
+
+/* ---------- start ---------- */
+if(!load())loadSample();
+buildGrid();syncInputs();syncTools();schedule();loadPhotos();
+})();
+</script>
+
+</body></html>
