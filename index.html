@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>天花板盤點</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
 <style>
@@ -96,6 +96,7 @@ h2{margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var
 .legend .t{width:20px;height:20px}
 .chk{display:flex;align-items:center;gap:8px;min-height:32px;cursor:pointer}
 .chk input{width:18px;height:18px;margin:0;accent-color:var(--ink)}
+.sw-ret{width:14px;height:14px;background:rgba(var(--ret-rgb),.28);border:1px solid rgb(var(--ret-rgb))}
 .sw-cov{width:14px;height:14px;background:rgba(var(--vent-rgb),.28);border:1px solid rgb(var(--vent-rgb))}
 
 /* cell visuals, shared by the grid, tool swatches and legend. Each cell is exactly one of: ceil, void, out, ret. */
@@ -173,12 +174,13 @@ h2{margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var
 .kvr dd{margin:0;font:600 14px var(--mono);font-variant-numeric:tabular-nums;text-align:right}
 .empty{margin:10px 0 0;color:var(--muted)}
 .export{justify-self:start}
+[hidden]{display:none !important}
 .modal{
   position:fixed;inset:0;z-index:10;display:grid;place-items:center;background:rgba(0,0,0,.55);
   padding:max(16px,env(safe-area-inset-top,0px)) 16px max(16px,env(safe-area-inset-bottom,0px));
 }
 .modal-card{
-  width:100%;max-width:980px;max-height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:10px;
+  width:100%;max-width:980px;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:10px;
   padding:14px;background:var(--surface);border:1px solid var(--line);border-radius:6px;
 }
 .modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -194,7 +196,7 @@ h2{margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var
 .cp[hidden]{display:none}
 .cp textarea{display:block;width:100%;box-sizing:border-box;resize:none;padding:8px 10px;font:14px/1.7 var(--mono);color:var(--ink);background:var(--tile);border:1px solid var(--line);border-radius:6px}
 .cp .btn{justify-self:start}
-.modal-foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.modal-foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;max-height:42vh;overflow:auto}
 .note{font-size:12px;color:var(--muted)}
 .ph{
   position:absolute;top:2px;right:2px;z-index:1;min-width:16px;height:16px;padding:0 4px;border-radius:8px;
@@ -213,7 +215,7 @@ h2{margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var
   <header class="top">
     <div>
       <h1>天花板盤點</h1>
-      <p class="lede">先產生 m × n 格。每一格只能是天花板、出風口、回風口或牆壁其中一種，天花板格再標記發霉與灑水頭。右側會統計以出風口為中心的九宮格內有幾格發霉，回風口不列入。</p>
+      <p class="lede">先產生 m × n 格。每一格只能是天花板、出風口、回風口或牆壁其中一種，天花板格再標記發霉與灑水頭。右側會統計以出風口為中心的九宮格內有幾格發霉，回風口預設不列入，可用下方開關納入。</p>
     </div>
     <span class="chip" id="sampleChip" hidden>範例資料</span>
   </header>
@@ -237,6 +239,7 @@ h2{margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var
       <div class="pbar" id="pbar" hidden><span class="pt" id="pbarText"></span><button class="btn sm" id="pbarGo" type="button">拍照</button><button class="btn sm" id="pbarCancel" type="button">取消</button></div>
       <div class="legend"><span><i class="t ceil"></i>天花板</span><span><i class="t void"></i>牆壁</span></div>
       <label class="chk"><input type="checkbox" id="covChk" checked><span class="sw-cov"></span>顯示出風口九宮格範圍</label>
+      <label class="chk"><input type="checkbox" id="retChk"><span class="sw-ret"></span>九宮格也納入回風口</label>
       <div class="gridwrap" id="gridwrap"><div id="grid" role="group" aria-label="天花板格點"></div></div>
       <div class="caption"><span>天花板平面圖</span><span id="capSize"></span></div>
       <button class="btn export" id="exportBtn" type="button">輸出圖片</button>
@@ -250,7 +253,7 @@ h2{margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var
         <dl class="kv" id="overview"></dl>
       </section>
       <section class="panel">
-        <h2>出風口九宮格發霉</h2>
+        <h2 id="ventTitle">出風口九宮格發霉</h2>
         <dl class="kv" id="ventAgg"></dl>
         <p class="empty" id="ventEmpty" hidden>還沒有出風口。選「出風口」工具後點格子。</p>
       </section>
@@ -300,7 +303,7 @@ var TOOLS={
   photo:{label:'拍照',sw:ICO_OPEN+'<path d="M3.5 7.5h3L8 5h6l1.5 2.5h3V17h-15z"/><circle cx="11" cy="12" r="3"/></svg>',hint:'點格子選取拍照範圍，再點另一格可擴大成多格（矩形範圍），然後按「拍照」。手機會開啟相機，電腦會選擇圖片。同一個起點格再拍會取代舊照片。照片會附在輸出圖片上，並用箭頭指到範圍。'},
 };
 
-var rows=7,cols=10,cells=[],tool='ceil',showCov=true,sample=true;
+var rows=7,cols=10,cells=[],tool='ceil',showCov=true,incRet=false,sample=true;
 var cellEls=[],roving=null,painting=false,paintVal=null,suppressClick=false,raf=0;
 
 var grid=$('grid'),wrap=$('gridwrap');
@@ -328,7 +331,7 @@ function loadSample(){
 function save(){
   try{
     localStorage.setItem(KEY,JSON.stringify({
-      rows:rows,cols:cols,showCov:showCov,sample:sample,
+      rows:rows,cols:cols,showCov:showCov,incRet:incRet,sample:sample,
       cells:cells.map(function(c){return TYPES.indexOf(c.t)|(c.m?4:0)|(c.s?8:0)|(c.p?16:0)})
     }));
   }catch(e){}
@@ -349,7 +352,7 @@ function load(){
       if(legacy)return {t:!(b&1)?'void':(b&2)?'out':(b&16)?'ret':'ceil',m:!!(b&4),s:!!(b&8),p:false};
       return {t:TYPES[b&3],m:!!(b&4),s:!!(b&8),p:!!(b&8)?false:!!(b&16)};
     });
-    showCov=d.showCov!==false;sample=!!d.sample;
+    showCov=d.showCov!==false;incRet=d.incRet===true;sample=!!d.sample;
     return true;
   }catch(e){return false}
 }
@@ -498,6 +501,7 @@ function syncTools(){
 function syncInputs(){
   $('rowsIn').value=rows;$('colsIn').value=cols;
   $('covChk').checked=showCov;
+  $('retChk').checked=incRet;
 }
 function applySize(){
   var nr=clamp(parseInt($('rowsIn').value,10)||rows,1,MAXN);
@@ -526,6 +530,7 @@ armed($('clearMarks'),function(){
 });
 armed($('loadSample'),function(){loadSample();photos=[];savePhotos();buildGrid();syncInputs();schedule()});
 $('covChk').addEventListener('change',function(){showCov=this.checked;schedule()});
+$('retChk').addEventListener('change',function(){incRet=this.checked;schedule()});
 
 /* ---------- statistics ---------- */
 function nbrs(i){
@@ -543,17 +548,18 @@ function kvRow(name,value,kind){
 var DESC={ceil:'天花板',void:'牆壁',out:'出風口',ret:'回風口'};
 
 function stats(){
-  var n=rows*cols,i,st={ceilN:0,voidN:0,outN:0,retN:0,moldN:0,sprN:0,partN:0,uMold:0,uSpr:0,uPart:0,uBoth:0,uPlain:0,outs:[],union:null};
+  var n=rows*cols,i,st={ceilN:0,voidN:0,outN:0,retN:0,moldN:0,sprN:0,partN:0,uMold:0,uSpr:0,uPart:0,uBoth:0,uPlain:0,outs:[],rets:[],centers:[],union:null};
   for(i=0;i<n;i++){
     var x=cells[i];
     if(x.t==='ceil'){st.ceilN++;if(x.m)st.moldN++;if(x.s)st.sprN++;if(x.p)st.partN++}
     else if(x.t==='void')st.voidN++;
     else if(x.t==='out'){st.outN++;st.outs.push(i)}
-    else st.retN++;
+    else{st.retN++;st.rets.push(i)}
   }
-  /* 3x3 around every 出風口 (return vents are not centers); overlapping cells are counted once */
+  st.centers=incRet?st.outs.concat(st.rets):st.outs;
+  /* 3x3 around every 出風口, and around every 回風口 only when the switch is on; overlapping cells are counted once */
   var union=new Set();
-  st.outs.forEach(function(v){nbrs(v).forEach(function(j){union.add(j)})});
+  st.centers.forEach(function(v){nbrs(v).forEach(function(j){union.add(j)})});
   union.forEach(function(j){var y=cells[j];if(y.t==='ceil'&&y.m){st.uMold++;if(y.s)st.uSpr++;else if(y.p)st.uPart++;else st.uPlain++}});
   st.union=union;
   return st;
@@ -591,7 +597,9 @@ function render(){
     kvRow('要切割',st.partN,'part');
 
   var agg='',empty=$('ventEmpty');
-  if(st.outs.length){
+  $('ventTitle').textContent=incRet?'出風口、回風口九宮格發霉':'出風口九宮格發霉';
+  empty.textContent=incRet?'還沒有出風口或回風口。選工具後點格子。':'還沒有出風口。選「出風口」工具後點格子。';
+  if(st.centers.length){
     agg=kvRow('有灑水頭',st.uSpr,'spr')+
       kvRow('要切割',st.uPart,'part')+
       kvRow('完整',st.uPlain,'mold')+
@@ -919,10 +927,10 @@ async function buildCanvas(withPhotos){
     {c:{t:'ceil'},l:'天花板'},{c:{t:'void'},l:'牆壁'},{c:{t:'out'},l:'出風口'},{c:{t:'ret'},l:'回風口'},
     {c:{t:'ceil',m:true},l:'發霉'},{c:{t:'ceil',s:true},l:'灑水頭'},{c:{t:'ceil',p:true},l:'要切割'}
   ];
-  if(showCov&&st.outs.length)legend.push({c:{t:'ceil'},cov:true,l:'出風口九宮格範圍'});
+  if(showCov&&st.centers.length)legend.push({c:{t:'ceil'},cov:true,l:incRet?'出風口、回風口九宮格範圍':'出風口九宮格範圍'});
   var legLines=flow(legend,function(it){return 28+m.measureText(it.l).width},maxW,22);
   var facts=[];
-  if(st.outs.length)facts.push('出風口九宮格發霉：有灑水頭 '+st.uSpr,'要切割 '+st.uPart,'完整 '+st.uPlain,'總數 '+st.uMold);
+  if(st.centers.length)facts.push((incRet?'出風口、回風口九宮格發霉：':'出風口九宮格發霉：')+'有灑水頭 '+st.uSpr,'要切割 '+st.uPart,'完整 '+st.uPlain,'總數 '+st.uMold);
   var factLines=flow(facts,function(t){return m.measureText(t).width},maxW,22);
   var legY=colBottom+18,factY=legY+legLines.length*30+8;
   var H=facts.length?factY+factLines.length*24+pad-4:legY+legLines.length*30+pad-8;
@@ -1043,7 +1051,7 @@ $('imgModal').addEventListener('click',function(e){if(e.target===this)closeModal
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('imgModal').hidden)closeModal()});
 function statsText(){
   var st=stats();
-  if(!st.outs.length)return '';
+  if(!st.centers.length)return '';
   return ['有灑水頭的天花板 '+st.uSpr,'要切割的天花板 '+st.uPart,'完整無須切割 '+st.uPlain,'天花板總數 '+st.uMold].join('\n');
 }
 $('cpBtn').addEventListener('click',async function(){
