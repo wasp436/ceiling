@@ -148,6 +148,7 @@ h2{margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var
 }
 @media (hover:hover){.c:hover{outline:2px solid var(--ink);outline-offset:-2px;z-index:1}}
 .c:focus-visible{outline:2px solid var(--ink);outline-offset:-2px;z-index:2}
+.pbox{box-sizing:border-box;border:3px solid;border-radius:2px;pointer-events:none;z-index:2;box-shadow:0 0 0 1.5px #fff}
 .t.sel{outline:3px solid #e0561b;outline-offset:-3px;position:relative;z-index:1}
 .pbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
 .pbar[hidden]{display:none}
@@ -236,7 +237,7 @@ h2{margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var
     <section class="board" aria-label="天花板格點">
       <div class="tools" id="tools" role="toolbar" aria-label="標記工具"></div>
       <p class="hint" id="hint"></p>
-      <div class="pbar" id="pbar" hidden><span class="pt" id="pbarText"></span><button class="btn sm" id="pbarGo" type="button">拍照</button><button class="btn sm" id="pbarCancel" type="button">取消</button></div>
+      <div class="pbar" id="pbar" hidden><span class="pt" id="pbarText"></span><button class="btn sm" id="pbarGo" type="button">拍照</button><button class="btn sm" id="pbarPick" type="button">選擇圖片</button><button class="btn sm" id="pbarCancel" type="button">取消</button></div>
       <div class="legend"><span><i class="t ceil"></i>天花板</span><span><i class="t void"></i>牆壁</span></div>
       <label class="chk"><input type="checkbox" id="covChk" checked><span class="sw-cov"></span>顯示出風口九宮格範圍</label>
       <label class="chk"><input type="checkbox" id="retChk"><span class="sw-ret"></span>九宮格也納入回風口</label>
@@ -244,6 +245,7 @@ h2{margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:.06em;color:var
       <div class="caption"><span>天花板平面圖</span><span id="capSize"></span></div>
       <button class="btn export" id="exportBtn" type="button">輸出圖片</button>
       <input class="sr-file" id="photoIn" type="file" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
+      <input class="sr-file" id="photoPick" type="file" accept="image/*" tabindex="-1" aria-hidden="true">
       <p class="tip">滑鼠可按住拖曳連續標記。點列號或欄號，可整列、整欄套用目前工具。鍵盤用方向鍵移動，Enter 或空白鍵套用。</p>
     </section>
 
@@ -300,7 +302,7 @@ var TOOLS={
   mold:{label:'發霉',sw:'<span class="t ceil has-mold"></span>',hint:'點天花板格標記或取消發霉。'},
   spr:{label:'灑水頭',sw:'<span class="t ceil has-spr"></span>',hint:'點天花板格標記或取消消防灑水頭。已標「要切割」的格子不能再標灑水頭。'},
   part:{label:'要切割',sw:'<span class="t ceil has-part"></span>',hint:'點天花板格標記或取消要切割（被牆、梁或管線卡住、需要裁切的板子）。有灑水頭的格子不能標要切割。'},
-  photo:{label:'拍照',sw:ICO_OPEN+'<path d="M3.5 7.5h3L8 5h6l1.5 2.5h3V17h-15z"/><circle cx="11" cy="12" r="3"/></svg>',hint:'點格子選取拍照範圍，再點另一格可擴大成多格（矩形範圍），然後按「拍照」。手機會開啟相機，電腦會選擇圖片。同一個起點格再拍會取代舊照片。照片會附在輸出圖片上，並用箭頭指到範圍。'},
+  photo:{label:'拍照',sw:ICO_OPEN+'<path d="M3.5 7.5h3L8 5h6l1.5 2.5h3V17h-15z"/><circle cx="11" cy="12" r="3"/></svg>',hint:'點格子選取拍照範圍，再點另一格可擴大成多格（矩形範圍），然後按「拍照」。按「拍照」會開啟相機（手機），按「選擇圖片」可從相簿或檔案挑選已有的照片（電腦兩者都是選圖片）。同一個起點格再拍會取代舊照片。照片會附在輸出圖片上，並用箭頭指到範圍。'},
 };
 
 var rows=7,cols=10,cells=[],tool='ceil',showCov=true,incRet=false,sample=true;
@@ -364,18 +366,20 @@ function buildGrid(){
   grid.textContent='';cellEls=[];roving=null;
   grid.style.gridTemplateColumns='var(--hw) repeat('+cols+', var(--cs))';
   var frag=document.createDocumentFragment();
-  frag.append(mk('span','corner'));
+  var cn=mk('span','corner');cn.style.gridArea='1 / 1';frag.append(cn);
   for(var c=0;c<cols;c++){
     var h=mk('button','hd col',colName(c));h.type='button';h.tabIndex=-1;
+    h.style.gridArea='1 / '+(c+2);
     h.dataset.k='col';h.dataset.n=c;h.setAttribute('aria-label','整欄套用 '+colName(c));
     frag.append(h);
   }
   for(var r=0;r<rows;r++){
     var rh=mk('button','hd row',String(r+1));rh.type='button';rh.tabIndex=-1;
+    rh.style.gridArea=(r+2)+' / 1';
     rh.dataset.k='row';rh.dataset.n=r;rh.setAttribute('aria-label','整列套用 '+(r+1));
     frag.append(rh);
     for(var cc=0;cc<cols;cc++){
-      var b=mk('button','c t ceil');b.type='button';b.tabIndex=-1;b.dataset.i=r*cols+cc;
+      var b=mk('button','c t ceil');b.type='button';b.tabIndex=-1;b.dataset.i=r*cols+cc;b.style.gridArea=(r+2)+' / '+(cc+2);
       cellEls.push(b);frag.append(b);
     }
   }
@@ -742,15 +746,24 @@ function delPhoto(key){
 }
 function renderPhotos(){
   cellEls.forEach(function(el){if(el._ph){el._ph.remove();el._ph=null}});
+  grid.querySelectorAll('.pbox').forEach(function(e){e.remove()});
+  photos.forEach(function(p,k){
+    if(!inBounds(p.key))return;
+    var rc=rectOf(p),bx=mk('div','pbox');
+    bx.style.gridArea=(rc.r+2)+' / '+(rc.c+2)+' / span '+rc.h+' / span '+rc.w;
+    bx.style.borderColor=PH_COLORS[k%PH_COLORS.length];
+    bx.setAttribute('aria-hidden','true');
+    grid.append(bx);
+  });
   var list=$('photoList');
   list.textContent='';
   photos.forEach(function(p,k){
     var li=mk('li','ph-item'),img=mk('img');
-    img.src=p.data;img.alt='照片 '+(k+1);
+    img.src=p.data;img.alt='照片 '+(k+1);img.style.borderColor=PH_COLORS[k%PH_COLORS.length];img.style.borderWidth='3px';
     var lab=mk('span','ph-lab',(k+1)+' · '+rectLabel(rectOf(p)));
     var box=mk('span','ph-btns');
-    var re=mk('button','btn sm','重拍');re.type='button';
-    re.addEventListener('click',function(){pendingKey=p.key;pendingH=p.h||1;pendingW=p.w||1;$('photoIn').value='';$('photoIn').click()});
+    var re=mk('button','btn sm','重拍／換圖');re.type='button';
+    re.addEventListener('click',function(){pendingKey=p.key;pendingH=p.h||1;pendingW=p.w||1;$('photoPick').value='';$('photoPick').click()});
     var org=mk('button','btn sm','下載原圖');org.type='button';
     org.addEventListener('click',function(){downloadOrig(p,k,org)});
     var del=mk('button','btn sm','刪除');del.type='button';
@@ -769,6 +782,11 @@ $('pbarGo').addEventListener('click',function(){
   pendingKey=rc.r+','+rc.c;pendingH=rc.h;pendingW=rc.w;
   $('photoIn').value='';$('photoIn').click();
 });
+$('pbarPick').addEventListener('click',function(){
+  var rc=selRect();if(!rc)return;
+  pendingKey=rc.r+','+rc.c;pendingH=rc.h;pendingW=rc.w;
+  $('photoPick').value='';$('photoPick').click();
+});
 function shrink(file){
   return new Promise(function(res,rej){
     var fr=new FileReader();
@@ -782,14 +800,16 @@ function shrink(file){
     fr.readAsDataURL(file);
   });
 }
-$('photoIn').addEventListener('change',function(){
+function onPhotoFile(){
   var f=this.files&&this.files[0],key=pendingKey;
   if(!f||!key)return;
   shrink(f).then(function(data){setPhoto(key,data,f,pendingH,pendingW);if(tool==='photo')clearSel()},function(){
     $('hint').textContent='無法讀取這張照片，請再試一次。';
     setTimeout(syncTools,3000);
   });
-});
+}
+$('photoIn').addEventListener('change',onPhotoFile);
+$('photoPick').addEventListener('change',onPhotoFile);
 
 /* ---------- image export (fixed light palette so the picture reads the same everywhere) ---------- */
 var CV={ink:'#17252d',muted:'#587079',tile:'#f7f9f9',tbar:'#bcc7ce',voidA:'#34424b',voidB:'#6b7b86',
